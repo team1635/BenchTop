@@ -6,36 +6,31 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 //import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Gyro;
 
 public class DriveTrain extends Subsystem {
 
-	private SpeedController frontLeftMotor, backLeftMotor,
-			frontRightMotor, backRightMotor;
+	private SpeedController frontLeftMotor, backLeftMotor, frontRightMotor,
+			backRightMotor;
 	private RobotDrive drive;
 	private Encoder leftEncoder, rightEncoder;
+	private Gyro gyro;
 
 	public DriveTrain() {
 		super();
-	
-		//myRobot = new RobotDrive(0, 2, 1, 3);
-//		frontLeftMotor = new Talon(0);
-//		backLeftMotor = new Talon(2);
-//		frontRightMotor = new Talon(1);
-//		backRightMotor = new Talon(3);
-		
+
 		frontLeftMotor = new Victor(0);
 		backLeftMotor = new Victor(2);
 		frontRightMotor = new Victor(1);
 		backRightMotor = new Victor(3);
-		
-		drive = new RobotDrive(frontLeftMotor, backLeftMotor,
-							   frontRightMotor, backRightMotor);
 
-		//leftEncoder = new Encoder(2, 3, true, Encoder.EncodingType.k4X);
+		drive = new RobotDrive(frontLeftMotor, backLeftMotor, frontRightMotor,
+				backRightMotor);
+
+		// leftEncoder = new Encoder(2, 3, true, Encoder.EncodingType.k4X);
 		leftEncoder = new Encoder(0, 1);
 		leftEncoder.setMaxPeriod(.1);
 		leftEncoder.setMinRate(10);
@@ -43,14 +38,14 @@ public class DriveTrain extends Subsystem {
 		leftEncoder.setReverseDirection(true);
 		leftEncoder.setSamplesToAverage(20);
 
-		//rightEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+		// rightEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
 		rightEncoder = new Encoder(2, 3);
 		rightEncoder.setMaxPeriod(.1);
 		rightEncoder.setMinRate(10);
 		rightEncoder.setDistancePerPulse(0.07967557);
 		rightEncoder.setReverseDirection(true);
 		rightEncoder.setSamplesToAverage(20);
-		
+
 		// Encoders may measure differently in the real world and in
 		// simulation. In this example the robot moves 0.042 barleycorns
 		// per tick in the real world, but the simulated encoders
@@ -61,24 +56,31 @@ public class DriveTrain extends Subsystem {
 			rightEncoder.setDistancePerPulse(0.042);
 		} else {
 			// Circumference in ft = 4in/12(in/ft)*PI
-			leftEncoder.setDistancePerPulse((4.0/12.0*Math.PI) / 360.0);
-			rightEncoder.setDistancePerPulse((4.0/12.0*Math.PI) / 360.0);
+			leftEncoder.setDistancePerPulse((4.0 / 12.0 * Math.PI) / 360.0);
+			rightEncoder.setDistancePerPulse((4.0 / 12.0 * Math.PI) / 360.0);
 		}
 
+		gyro = new Gyro(1);
+
 		// Let's show everything on the LiveWindow
-//		LiveWindow.addActuator("Drive Train", "Front_Left Motor", (Talon) frontLeftMotor);
-//		LiveWindow.addActuator("Drive Train", "Back Left Motor", (Talon) backLeftMotor);
-//		LiveWindow.addActuator("Drive Train", "Front Right Motor", (Talon) frontRightMotor);
-//		LiveWindow.addActuator("Drive Train", "Back Right Motor", (Talon) backRightMotor);
+		// LiveWindow.addActuator("Drive Train", "Front_Left Motor", (Talon)
+		// frontLeftMotor);
+		// LiveWindow.addActuator("Drive Train", "Back Left Motor", (Talon)
+		// backLeftMotor);
+		// LiveWindow.addActuator("Drive Train", "Front Right Motor", (Talon)
+		// frontRightMotor);
+		// LiveWindow.addActuator("Drive Train", "Back Right Motor", (Talon)
+		// backRightMotor);
 		LiveWindow.addSensor("Drive Train", "Left Encoder", leftEncoder);
 		LiveWindow.addSensor("Drive Train", "Right Encoder", rightEncoder);
+		LiveWindow.addSensor("Drive Train", "Gyro", gyro);
 	}
 
 	@Override
 	protected void initDefaultCommand() {
-		//setDefaultCommand(new TankDriveWithJoystick());
+		// setDefaultCommand(new TankDriveWithJoystick());
 	}
-	
+
 	/**
 	 * The log method puts interesting information to the SmartDashboard.
 	 */
@@ -87,24 +89,28 @@ public class DriveTrain extends Subsystem {
 		SmartDashboard.putNumber("Right Distance", rightEncoder.getDistance());
 		SmartDashboard.putNumber("Left Speed", leftEncoder.getRate());
 		SmartDashboard.putNumber("Right Speed", rightEncoder.getRate());
+		SmartDashboard.putNumber("Gyro", gyro.getAngle());
 	}
-	
+
 	public void drive(double left, double right, boolean squared) {
 		drive.tankDrive(left, right, squared);
 	}
-	
+
 	public void drive(double left, double right) {
 		drive(left, right, false);
 	}
 
 	/**
-	 * @param joy The ps3 style joystick to use to drive tank style
+	 * @param joy
+	 *            The ps3 style joystick to use to drive tank style
 	 */
 	public void drive(Joystick joy) {
-		//drive(joy.getY(), -joy.getAxis(AxisType.kThrottle)); //this is the left trigger
-		//drive(joy.getY(), joy.getZ()); //this is the right trigger
-		//drive(joy.getY(), joy.getX()); //this is the left horizontal axis
-		//drive(joy.getY(), joy.getAxis(AxisType.kTwist)); //this is the left trigger again
+		// drive(joy.getY(), -joy.getAxis(AxisType.kThrottle)); //this is the
+		// left trigger
+		// drive(joy.getY(), joy.getZ()); //this is the right trigger
+		// drive(joy.getY(), joy.getX()); //this is the left horizontal axis
+		// drive(joy.getY(), joy.getAxis(AxisType.kTwist)); //this is the left
+		// trigger again
 		drive(joy.getY(), joy.getRawAxis(5), true);
 	}
 
@@ -112,17 +118,24 @@ public class DriveTrain extends Subsystem {
 	 * Reset the robots sensors to the zero states.
 	 */
 	public void reset() {
+		gyro.reset();
 		leftEncoder.reset();
 		rightEncoder.reset();
 	}
-	
+
 	/**
 	 * @return The distance driven (average of left and right encoders).
 	 */
 	public double getDistance() {
-		return (leftEncoder.getDistance() + rightEncoder.getDistance())/2;
+		return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
 	}
-	
 
+	public double getHeading() {
+		return gyro.getAngle();
+	}
 
+	public void spin() {
+		//TODO take spinDirection and angle as parameters
+		drive(0.3, -0.3, false); //this should turn clockwise (right)
+	}
 }

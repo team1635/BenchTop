@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -18,6 +19,8 @@ public class Robot extends IterativeRobot {
 	Joystick joy;
 	int autoLoopCounter;
 	CameraServer server;
+	long autoLoopCount;
+	boolean autoDriveStraight; // DEBUG
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -44,17 +47,26 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		autoLoopCounter = 0;
 		driveTrain.reset();
+		double loopSetting = SmartDashboard.getNumber("DB/Slider 0", 80);
+		autoDriveStraight = SmartDashboard.getBoolean("DB/Button 1", true);
+		autoLoopCount = (long) (loopSetting * 100);
+
+		System.out.println("autoLoopCount = " + autoLoopCount);
+		SmartDashboard.putNumber("autoLoopCounter", autoLoopCount);
 	}
 
 	/**
 	 * This function is called periodically during autonomous
 	 */
 	public void autonomousPeriodic() {
-		if (autoLoopCounter < 80) // Check if we've completed 100 loops
-									// (approximately 2 seconds)
+		if (autoLoopCounter < autoLoopCount) // Check if we've completed a set
+												// number of loops
 		{
-		//	driveTrain.drive(-0.41, -0.50); //TODO: replace with driveControlled
-			driveTrain.drive(0.5, 0.5);
+			if (autoDriveStraight) {
+				driveTrain.drive(0.5, 0.5); //positive values drive forward
+			} else {
+				driveTrain.spin();
+			}
 			autoLoopCounter++;
 			driveTrain.log();
 		} else {

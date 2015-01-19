@@ -1,3 +1,19 @@
+Sunday 1/18/2015
+
+TODO: Check code into GitHub
+TODO: Get the Gyro working
+TODO: Get the robot to turn 90 degrees in automonmous.
+TODO: Write the code CommandBased
+TODO: Figure out how to get the Java SmartDashboard working with the program.
+TODO: Figure out how to test subsystems
+TODO: Test that R2D2 can drive the robot.
+TODO: Set up the CAN bus to the PDP
+TODO: Read current draw for various commands.
+
+Get .1 male pin headers
+Get PayPal account for donations
+
+
 Code we used in autonomous
 
 			System.out.println("autoLoopCounter=" + autoLoopCounter);
